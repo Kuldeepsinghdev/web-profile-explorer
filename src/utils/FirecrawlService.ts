@@ -47,14 +47,20 @@ export class FirecrawlService {
         limit: 100,
         scrapeOptions: {
           formats: ['markdown', 'html'],
-          selectors: {
-            profile: 'meta[name="description"]',
-            products: '.products, .services, #products, #services',
-            about: '.about-us, #about, .company-info',
-            leadership: '.leadership, .team, .executives',
-            locations: '.locations, .offices, .contact-us',
-            social: '.social-media, .social-links',
-          }
+          // Remove the selectors property as it's not supported
+          // Instead, we'll process the HTML content after crawling
+          waitForSelector: '.about-us, .company-info, .products, .services, .team, .contact-us',
+          includeSelectors: [
+            '.about-us',
+            '.company-info',
+            '.products',
+            '.services',
+            '.team',
+            '.contact-us',
+            'meta[name="description"]',
+            '.social-media',
+            '.locations'
+          ]
         }
       }) as CrawlResponse;
 
