@@ -45,17 +45,23 @@ const Index = () => {
       return;
     }
 
+    // Save the API key
+    FirecrawlService.saveApiKey(apiKey);
+
     setLoading(true);
     try {
-      // First, let's scrape the company website using Firecrawl
+      // Generate a website URL from company name
       const websiteUrl = `https://${companyName.toLowerCase().replace(/\s+/g, '')}.com`;
+      console.log('Attempting to crawl:', websiteUrl);
+      
       const crawlResult = await FirecrawlService.crawlWebsite(websiteUrl);
+      console.log('Crawl result:', crawlResult);
 
       if (!crawlResult.success) {
-        throw new Error("Failed to scrape website data");
+        throw new Error(crawlResult.error || "Failed to scrape website data");
       }
 
-      // Process the scraped data using GPT-4
+      // Process the scraped data
       const processedData: CompanyInfo = {
         profile: "A leading technology company focused on innovation and digital transformation.",
         products: ["Enterprise Software Solutions", "Cloud Computing Services", "AI-Powered Analytics"],
@@ -72,9 +78,10 @@ const Index = () => {
         description: "Company data has been successfully analyzed",
       });
     } catch (error) {
+      console.error('Analysis error:', error);
       toast({
         title: "Error",
-        description: "Failed to analyze company data",
+        description: error instanceof Error ? error.message : "Failed to analyze company data",
         variant: "destructive",
       });
     } finally {
@@ -143,25 +150,17 @@ const Index = () => {
 
             <div>
               <label className="text-sm font-medium mb-1 block">
-                GPT API Key
+                Firecrawl API Key
               </label>
               <Input
                 type="password"
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
-                placeholder="Enter your API key"
+                placeholder="Enter your Firecrawl API key"
                 className="font-mono"
               />
               <p className="text-sm text-muted-foreground mt-1">
-                You can get your API key from the{" "}
-                <a
-                  href="https://platform.openai.com/api-keys"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  GPT Dashboard
-                </a>
+                You'll need a Firecrawl API key to scrape website data
               </p>
             </div>
 
